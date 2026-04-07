@@ -1,5 +1,5 @@
 // js extension is necessary for esm
-import { remarkMdxToc } from "../src/index.js";
+import remarkMdxToc from "../src/index.js";
 import { compileSync } from "@mdx-js/mdx";
 import fs from "fs";
 import path from 'path';

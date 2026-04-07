@@ -35,7 +35,7 @@ export interface RemarkMdxTocOptions {
 };
 
 
-export const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
+const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 	(ast) => {
 		const mdast = ast as Root;
 		const name = options.name ?? "toc";
@@ -144,3 +144,5 @@ export const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 		mdast.children.unshift(tocExport);
 	}
 );
+
+export default remarkMdxToc;
