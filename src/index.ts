@@ -1,28 +1,27 @@
-import { Root, Heading } from "mdast";
-import { visit } from "unist-util-visit";
-import { toString } from "mdast-util-to-string";
-import { MdxjsEsm } from "mdast-util-mdx";
-import { name as isIdentifierName } from 'estree-util-is-identifier-name';
 import { valueToEstree } from 'estree-util-value-to-estree';
-import { Plugin } from "unified";
-import { MdxJsxFlowElement, MdxJsxAttribute } from "mdast-util-mdx-jsx";
+import type { Heading, Root } from "mdast";
+import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
+import { toString } from "mdast-util-to-string";
+import type { Plugin } from "unified";
+import { define } from 'unist-util-mdx-define';
+import { visit } from "unist-util-visit";
 
 export type TocEntry = {
 	depth: number,
 	// value of the heading
 	value: string,
-	attributes: {[key: string]: string},
+	attributes: { [key: string]: string },
 	children: TocEntry[]
 };
 
 export type CustomTag = {
-  /// regex to match the tag name
+	/// regex to match the tag name
 	name: RegExp,
 	/// get depth from name
 	depth: (name: string) => number
 };
 
-export interface RemarkMdxTocOptions {
+export interface RemarkMdxTocOptions extends define.Options {
 	/**
 	 * If specified, export toc using the name.
 	 * Otherwise, use `toc` as the name.
@@ -35,14 +34,8 @@ export interface RemarkMdxTocOptions {
 };
 
 
-const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
-	(ast) => {
-		const mdast = ast as Root;
-		const name = options.name ?? "toc";
-		if (!isIdentifierName(name)) {
-			throw new Error(`Invalid name for an identifier: ${name}`);
-		}
-
+const remarkMdxToc: Plugin<[RemarkMdxTocOptions?], Root> = ({ name = 'toc', ...options } = {}) => (
+	(ast, file) => {
 		// structured toc
 		const toc: TocEntry[] = [];
 		// flat toc (share objects in toc, only for iterating)
@@ -50,11 +43,11 @@ const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 		const createEntry = (node: Heading | MdxJsxFlowElement, depth: number): TocEntry => {
 			let attributes = (node.data || {}) as TocEntry['attributes'];
 			if (node.type === "mdxJsxFlowElement") {
-				 attributes = Object.fromEntries(
+				attributes = Object.fromEntries(
 					node.attributes
 						.filter(attribute => attribute.type === 'mdxJsxAttribute' && typeof attribute.value === 'string')
 						.map(attribute => [(attribute as MdxJsxAttribute).name, attribute.value])
-					) as TocEntry['attributes'];
+				) as TocEntry['attributes'];
 			}
 			return {
 				depth,
@@ -64,7 +57,7 @@ const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 			}
 		};
 
-		visit(mdast, ["heading", "mdxJsxFlowElement"], node => {
+		visit(ast, ["heading", "mdxJsxFlowElement"], node => {
 			let depth = 0;
 			if (node.type === "mdxJsxFlowElement") {
 				let valid = false;
@@ -110,38 +103,7 @@ const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 		});
 
 		// Export in MDX
-		const tocExport: MdxjsEsm = {
-			type: "mdxjsEsm",
-			value: "",
-			data: {
-				estree: {
-					type: "Program",
-					sourceType: "module",
-					body: [
-						{
-							type: "ExportNamedDeclaration",
-							specifiers: [],
-							source: null,
-							declaration: {
-								type: "VariableDeclaration",
-								kind: "const",
-								declarations: [
-									{
-										type: "VariableDeclarator",
-										id: {
-											type: "Identifier",
-											name
-										},
-										init: valueToEstree(toc)
-									}
-								]
-							}
-						}
-					]
-				}
-			}
-		};
-		mdast.children.unshift(tocExport);
+		define(ast, file, { [name]: valueToEstree(toc) }, options)
 	}
 );
 
