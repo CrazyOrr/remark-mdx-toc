@@ -26,11 +26,11 @@ export interface RemarkMdxTocOptions extends define.Options {
 	 * If specified, export toc using the name.
 	 * Otherwise, use `toc` as the name.
 	 */
-	name?: string
+	name?: string,
 	/**
 	 * Add custom tag to toc
 	 */
-	customTags?: CustomTag[],
+	customTags?: CustomTag[]
 };
 
 
