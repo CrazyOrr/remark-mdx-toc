@@ -96,7 +96,7 @@ export const remarkMdxToc: Plugin<[RemarkMdxTocOptions?]> = (options = {}) => (
 			const entry = createEntry(node, depth);
 			flatToc.push(entry);
 
-			// find the last node that is less deep (parant)
+			// find the last node that is less deep (parent)
 			// Fall back to root
 			let parent: TocEntry[] = toc;
 			for (let i = flatToc.length - 1; i >= 0; --i) {
