@@ -16,7 +16,7 @@ Use Node 12+ and ESM import syntax to use this package.
 ## Usage
 
 ```js
-import { remarkMdxToc } from "remark-mdx-toc";
+import remarkMdxToc from "remark-mdx-toc";
 // This uses @mdx-js/mdx v2
 import { compileSync } from "@mdx-js/mdx";
 import fs from "fs";
@@ -90,8 +90,8 @@ export default MDXContent;
 
 ## Options
 
-* `name`: The exported variable name of the toc. By default, it's `toc`.
-* `customTags`: Add custom tags to toc.
+- `name`: The exported variable name of the toc. By default, it's `toc`.
+- `customTags`: Add custom tags to toc.
 
 `customTags` is an array of `CustomTag` defined below:
 
@@ -103,7 +103,6 @@ type CustomTag = {
   depth: (name: string) => number
 }
 ```
-
 
 ## License
 
