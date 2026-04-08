@@ -1,9 +1,9 @@
-// js extension is necessary for esm
 import { compile } from "@mdx-js/mdx";
 import fs from "node:fs/promises";
 import path from 'path';
 import remarkCustomHeaderId from 'remark-custom-header-id';
-import remarkMdxToc from "../src/index.js";
+// js extension is necessary for esm
+import remarkMdxToc from "../dist/index.js";
 
 const content = await compile(await fs.readFile(path.resolve(import.meta.dirname, "example.mdx")), {
 	jsx: true,
@@ -13,7 +13,7 @@ const content = await compile(await fs.readFile(path.resolve(import.meta.dirname
 			name: "toc",
 			customTags: [{
 				name: /^H[1-6]$/,
-				depth: (name: string) => parseInt(name.substring(1))
+				depth: name => parseInt(name.substring(1))
 			}]
 		}]
 	]
