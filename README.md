@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/npm/v/remark-mdx-toc.svg)](https://npmjs.org/package/remark-mdx-toc)
 
-A remark plugin to generate toc and convert it into MDX export
+A remark plugin to generate toc and convert it into MDX export.
 
 ## Installation
 
@@ -10,18 +10,18 @@ A remark plugin to generate toc and convert it into MDX export
 npm install remark-mdx-toc
 ```
 
-Note: This package uses [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-Use Node 12+ and ESM import syntax to use this package.
+> [!NOTE]
+> This package uses [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
+> Use Node 16+ and ESM import syntax to use this package.
 
 ## Usage
 
 ```js
+import { compile } from "@mdx-js/mdx";
+import fs from "node:fs/promises";
 import remarkMdxToc from "remark-mdx-toc";
-// This uses @mdx-js/mdx v2
-import { compileSync } from "@mdx-js/mdx";
-import fs from "fs";
 
-const content = compileSync(fs.readFileSync("example.mdx"), {
+const content = await compile(await fs.readFile("example.mdx"), {
   jsx: true,
   remarkPlugins: [remarkMdxToc],
   // Or specify the exported identifier
@@ -36,7 +36,7 @@ console.log(content.value);
 Suppose the `example.mdx` has the following content:
 
 ```md
-# Hello, world {#hello-world}
+# Hello, world ||hello-world||
 
 ## Title 1
 
@@ -84,9 +84,10 @@ function MDXContent(props = {}) {
 export default MDXContent;
 ```
 
-- HTML heading tags (`h1`-`h6`) are supported.
-- Custom tags can also be added through options.
-- `{#id}` syntax needs [remark-heading-id](https://github.com/imcuttle/remark-heading-id) plugin.
+> [!TIP]
+> - HTML heading tags (`h1`-`h6`) are supported.
+> - Custom tags can also be added through options.
+> - `||id||` syntax for custom heading ID needs [remark-custom-header-id](https://github.com/sindresorhus/remark-custom-header-id) plugin.
 
 ## Options
 
