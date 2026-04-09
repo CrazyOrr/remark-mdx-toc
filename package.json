@@ -18,7 +18,8 @@
   "keywords": [
     "remark",
     "mdx",
-    "toc"
+    "toc",
+    "remark-plugin"
   ],
   "repository": {
     "type": "git",
