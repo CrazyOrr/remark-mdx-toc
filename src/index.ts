@@ -34,7 +34,7 @@ export interface RemarkMdxTocOptions extends define.Options {
 };
 
 
-const remarkMdxToc: Plugin<[RemarkMdxTocOptions?], Root> = ({ name = 'toc', ...options } = {}) => (
+const remarkMdxToc: Plugin<[RemarkMdxTocOptions?], Root> = ({ name = 'toc', customTags, ...options } = {}) => (
 	(ast, file) => {
 		// structured toc
 		const toc: TocEntry[] = [];
@@ -65,8 +65,8 @@ const remarkMdxToc: Plugin<[RemarkMdxTocOptions?], Root> = ({ name = 'toc', ...o
 					valid = true;
 					depth = parseInt(node.name!.substring(1));
 				}
-				else if (options.customTags) {
-					for (const tag of options.customTags) {
+				else if (customTags) {
+					for (const tag of customTags) {
 						if (tag.name.test(node.name || "")) {
 							valid = true;
 							depth = tag.depth(node.name || "");
